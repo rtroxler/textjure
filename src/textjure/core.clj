@@ -14,7 +14,7 @@
 (def game-map {
            :living-room '("you are in the living room -" ((west door :garden)(upstairs stairway :attic)))
            :garden      '("you are in the garden -" ((east door :living-room)))
-           :attic       '("you are in an attic -" ((downstairs stairway living-room))) })
+           :attic       '("you are in an attic -" ((downstairs stairway :living-room))) })
 
 ;##### Describing things
 (defn describe-location [location game-map]
@@ -32,12 +32,14 @@
                        (println "you see a" x "on the floor -"))
                      (filter (fn [x]
                                (is-at? x loc obj-loc)) objs)))))
+
+
+;##### ACTIONS
 (defn look []
   (apply str (concat (describe-location location game-map)
           (describe-paths location game-map)
           (describe-floor location objects object-locations))))
 
-;##### ACTIONS
 (defn walk-direction [direction]
   (let [next (first (filter (fn [x] (= direction (first x)))
                             (first (rest (location game-map)))))]
