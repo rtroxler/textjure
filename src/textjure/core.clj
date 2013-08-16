@@ -32,11 +32,19 @@
                        (println "you see a" x "on the floor -"))
                      (filter (fn [x]
                                (is-at? x loc obj-loc)) objs)))))
-
 (defn look []
   (apply str (concat (describe-location location game-map)
           (describe-paths location game-map)
           (describe-floor location objects object-locations))))
+
+;##### ACTIONS
+(defn walk-direction [direction]
+  (let [next (first (filter (fn [x] (= direction (first x)))
+                            (first (rest (location game-map)))))]
+    (cond next (do (def location (nth next 2)) (look))
+          :else (println "you cannot go that way -"))))
+
+
 
 (defn -main 
   "I don't do a whole lot."
