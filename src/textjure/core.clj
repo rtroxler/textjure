@@ -1,5 +1,6 @@
 (ns textjure.core)
 
+;#### Global Vars
 (def objects '(whiskey-bottle bucket frog chain))
 (def object-locations (hash-map
                         'whiskey-bottle :living-room
@@ -8,13 +9,20 @@
                         'frog :garden))
 (def location :living-room)
 
-(defn is-at? [obj loc obj-loc] 
-  (= (obj obj-loc) loc))
-
 (def game-map {
            :living-room '("you are in the living room -" ((west door :garden)(upstairs stairway :attic)))
            :garden      '("you are in the garden -" ((east door :living-room)))
            :attic       '("you are in an attic -" ((downstairs stairway :living-room))) })
+
+
+;##### Helper functions
+(defn is-at? [obj loc obj-loc] 
+  (= (obj obj-loc) loc))
+
+(defmacro defspel [& rest] `(defmacro ~@rest))
+
+(defspel walk [direction] `(walk-direction '~direction))
+
 
 ;##### Describing things
 (defn describe-location [location game-map]
@@ -47,9 +55,24 @@
           :else (println "you cannot go that way -"))))
 
 
+;#### Game movement shit
+(defn eval-input [input]
+  (let [s (clojure.string/split input #"\s+")]
+    ((resolve (symbol (first s))) (second s))))
+
+(defn game []
+  (look)
+  (let [v (read-line)]
+    (if-not (empty? v)
+      (eval-input v)
+      (println "I don't understand that command."))
+    (recur)))
 
 (defn -main 
   "I don't do a whole lot."
   []
   (println "Welcome to _____")
-  (look))
+  (game))
+
+
+
